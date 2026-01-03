@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  clerkId   String   @unique
+  email     String   @unique
+  name      String?
+  role      String   @default("EMPLOYEE") // MANAGER, EMPLOYEE
+  department String?
+  position  String?
+  avatarUrl String?
+  
+  attendances Attendance[]
+  leaves      Leave[]
+  tasks       Task[] // Tasks assigned TO this user
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Attendance {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  
+  date      DateTime // Just the date part for easier querying
+  checkIn   DateTime
+  checkOut  DateTime?
+  status    String   @default("PRESENT") // PRESENT, LATE, HALF_DAY
+  
+  totalHours Float?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Leave {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  
+  startDate DateTime
+  endDate   DateTime
+  reason    String
+  status    String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  type      String   // SICK, CASUAL, VACATION
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Task {
+  id        String   @id @default(uuid())
+  assignedToId String
+  assignedTo   User     @relation(fields: [assignedToId], references: [id])
+  
+  title     String
+  description String?
+  status    String   @default("TODO") // TODO, IN_PROGRESS, DONE
+  priority  String   @default("MEDIUM") // LOW, MEDIUM, HIGH
+  dueDate   DateTime?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
