@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, MapPin, Clock, CheckCircle2, LogOut } from "lucide-react";
 import { checkInAction, checkOutAction } from "@/actions/employee/attendance.actions";
-import { toast } from "sonner"; // Assuming sonner is available or we use basic alert
-import { motion } from "framer-motion";
+import { toast } from "sonner";
+import { motion, AnimatePresence } from "framer-motion";
+import { useEffect } from "react";
 
 interface CheckInProps {
     initialData: {
@@ -26,15 +27,24 @@ export function CheckInInterface({ initialData }: CheckInProps) {
         initialData?.checkOut ? "checked-out" :
             initialData?.checkIn ? "checked-in" : "none"
     );
+    const [currentTime, setCurrentTime] = useState(new Date());
+
+    useEffect(() => {
+        const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+        return () => clearInterval(timer);
+    }, []);
+
+    const checkInTime = initialData?.checkIn ? new Date(initialData.checkIn) : null;
+    const checkOutTime = initialData?.checkOut ? new Date(initialData.checkOut) : null;
 
     const handleCheckIn = () => {
         startTransition(async () => {
             const res = await checkInAction();
             if (res.success) {
                 setStatus("checked-in");
-                alert("Checked in successfully!"); // Replace with toast
+                toast.success("Checked in successfully!");
             } else {
-                alert(res.message);
+                toast.error(res.message);
             }
         });
     };
@@ -44,9 +54,9 @@ export function CheckInInterface({ initialData }: CheckInProps) {
             const res = await checkOutAction();
             if (res.success) {
                 setStatus("checked-out");
-                alert("Checked out successfully!");
+                toast.success("Checked out successfully!");
             } else {
-                alert(res.message);
+                toast.error(res.message);
             }
         });
     };
@@ -65,16 +75,28 @@ export function CheckInInterface({ initialData }: CheckInProps) {
             <CardContent className="space-y-6 pt-6">
 
                 {/* Status Indicator */}
-                <div className="flex items-center justify-center gap-2 text-sm font-medium">
-                    Status:
-                    <span className={`px-2 py-1 rounded-full text-xs ${status === "checked-in" ? "bg-green-100 text-green-700" :
-                        status === "checked-out" ? "bg-gray-100 text-gray-700" :
-                            "bg-yellow-100 text-yellow-700"
-                        }`}>
-                        {status === "none" ? "Not Checked In" :
-                            status === "checked-in" ? "Currently Working" : "Shift Completed"}
-                    </span>
+                <div className="flex flex-col items-center justify-center space-y-2">
+                    <div className="text-4xl font-bold tracking-tighter tabular-nums">
+                        {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                    </div>
+                    <div className="flex items-center gap-2 text-sm font-medium">
+                        Status:
+                        <span className={`px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider ${status === "checked-in" ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 animate-pulse" :
+                            status === "checked-out" ? "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400" :
+                                "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
+                            }`}>
+                            {status === "none" ? "Not Checked In" :
+                                status === "checked-in" ? "Currently Working" : "Shift Completed"}
+                        </span>
+                    </div>
                 </div>
+
+                {status === "checked-in" && checkInTime && (
+                    <div className="bg-muted/30 p-3 rounded-xl border border-border/50 text-center">
+                        <p className="text-xs text-muted-foreground">Check-in time</p>
+                        <p className="text-sm font-semibold">{checkInTime.toLocaleTimeString()}</p>
+                    </div>
+                )}
 
                 {/* Actions */}
                 <div className="grid gap-4">

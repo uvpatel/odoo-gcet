@@ -18,9 +18,8 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
-// @ts-ignore
-import { useFormState, useFormStatus } from "react-dom";
+import { useState, useActionState } from "react";
+import { useFormStatus } from "react-dom";
 import { runPayroll } from "@/actions/admin/payroll.actions";
 import { Loader2, DollarSign } from "lucide-react";
 import { toast } from "sonner";
@@ -42,7 +41,7 @@ const initialState = {
 
 export function RunPayrollDialog({ trigger }: { trigger?: React.ReactNode }) {
     const [open, setOpen] = useState(false);
-    const [state, formAction] = useFormState(runPayroll, initialState);
+    const [state, formAction] = useActionState(runPayroll, initialState);
 
     // Close dialog on success
     if (state.success && open) {

@@ -7,6 +7,7 @@ import { requireRole } from "@/lib/auth";
 import { Users, UserCheck, UserMinus, CalendarClock, Download } from "lucide-react";
 import { StatsCard } from "@/components/dashboard/StatsCard";
 import { AttendanceFilters } from "@/components/dashboard/AttendanceFilters";
+import { ExportButton } from "@/components/dashboard/ExportButton";
 import { Button } from "@/components/ui/button";
 import User from "@/models/User";
 
@@ -48,6 +49,18 @@ export default async function AttendancePage({
         .sort({ date: -1 })
         .limit(50);
 
+    const serializedLogs = logs.map(l => ({
+        ...l.toObject(),
+        _id: l._id.toString(),
+        user: l.user ? {
+            name: (l.user as any).name,
+            email: (l.user as any).email
+        } : null,
+        date: l.date.toISOString(),
+        checkIn: l.checkIn ? l.checkIn.toISOString() : "-",
+        checkOut: l.checkOut ? l.checkOut.toISOString() : "-"
+    }));
+
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
             {/* Header Section */}
@@ -61,10 +74,18 @@ export default async function AttendancePage({
                     </p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <Button variant="outline" className="hidden md:flex">
-                        <Download className="mr-2 h-4 w-4" />
-                        Export
-                    </Button>
+                    <ExportButton
+                        data={serializedLogs}
+                        filename={`attendance_report_${new Date().toISOString().split('T')[0]}`}
+                        columns={[
+                            { header: "Employee", key: "user.name" },
+                            { header: "Email", key: "user.email" },
+                            { header: "Date", key: "date" },
+                            { header: "Check In", key: "checkIn" },
+                            { header: "Check Out", key: "checkOut" },
+                            { header: "Status", key: "status" }
+                        ]}
+                    />
                 </div>
             </div>
 

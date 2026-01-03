@@ -3,16 +3,16 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { connectDB } from "@/lib/db";
 import Leave from "@/models/Leave";
-import { getAuthUser } from "@/lib/auth"; // Ensure this is available
+import { getAuthUser } from "@/lib/auth";
 import { RequestLeaveDialog } from "@/components/dashboard/RequestLeaveDialog";
 import { LeaveActions } from "@/components/dashboard/LeaveActions";
+import { ExportButton } from "@/components/dashboard/ExportButton";
 import { redirect } from "next/navigation";
 
 export default async function LeavesPage() {
     await connectDB();
     const user = await getAuthUser();
 
-    // Redirect if not authenticated (though middleware should catch this)
     if (!user) redirect("/sign-in");
 
     // RBAC for filtering
@@ -22,14 +22,42 @@ export default async function LeavesPage() {
         .populate("user", "name email")
         .sort({ createdAt: -1 });
 
+    const serializedLeaves = leaves.map(l => ({
+        ...l.toObject(),
+        _id: l._id.toString(),
+        user: l.user ? {
+            name: (l.user as any).name,
+            email: (l.user as any).email
+        } : null,
+        from: l.from.toISOString(),
+        to: l.to.toISOString()
+    }));
+
     return (
         <div className="space-y-6 animate-in fade-in duration-500">
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-3xl font-bold tracking-tight">Leave Requests</h2>
+                    <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-400 bg-clip-text text-transparent">
+                        Leave Requests
+                    </h2>
                     <p className="text-muted-foreground">Manage time off and view history.</p>
                 </div>
-                <RequestLeaveDialog />
+                <div className="flex items-center gap-3">
+                    <ExportButton
+                        data={serializedLeaves}
+                        filename={`${user.role}_leaves_report_${new Date().toISOString().split('T')[0]}`}
+                        columns={[
+                            { header: "Employee", key: "user.name" },
+                            { header: "Email", key: "user.email" },
+                            { header: "Type", key: "type" },
+                            { header: "From", key: "from" },
+                            { header: "To", key: "to" },
+                            { header: "Reason", key: "reason" },
+                            { header: "Status", key: "status" }
+                        ]}
+                    />
+                    <RequestLeaveDialog />
+                </div>
             </div>
 
             <Card className="border-none shadow-sm ring-1 ring-border/50">

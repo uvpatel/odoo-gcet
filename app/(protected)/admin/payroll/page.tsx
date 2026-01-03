@@ -8,6 +8,7 @@ import { requireRole } from "@/lib/auth";
 import { Banknote, CreditCard, TrendingUp, Users, Download, Eye } from "lucide-react";
 import { StatsCard } from "@/components/dashboard/StatsCard";
 import { Badge } from "@/components/ui/badge";
+import { ExportButton } from "@/components/dashboard/ExportButton";
 
 export default async function PayrollPage({
     searchParams
@@ -18,11 +19,11 @@ export default async function PayrollPage({
     const user = await requireRole(["admin"]);
 
     // Calculate Latest Month Stats
-    const latestPayrolls = await Payroll.find()
+    const latestPayrollsList = await Payroll.find()
         .sort({ month: -1 })
         .limit(1);
 
-    const currentMonth = searchParams.month || latestPayrolls[0]?.month || new Date().toISOString().slice(0, 7);
+    const currentMonth = searchParams.month || latestPayrollsList[0]?.month || new Date().toISOString().slice(0, 7);
 
     const monthlyPayrolls = await Payroll.find({ month: currentMonth })
         .populate("user", "name email salary");
@@ -37,6 +38,17 @@ export default async function PayrollPage({
         .sort({ month: -1 })
         .limit(50);
 
+    const serializedPayrolls = payrolls.map(p => ({
+        ...p.toObject(),
+        _id: p._id.toString(),
+        user: p.user ? {
+            name: (p.user as any)?.name,
+            email: (p.user as any)?.email
+        } : null
+    }));
+
+    if (!user) return null;
+
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
             {/* Header Section */}
@@ -50,10 +62,18 @@ export default async function PayrollPage({
                     </p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <Button variant="outline" size="sm" className="hidden md:flex">
-                        <Download className="mr-2 h-4 w-4" />
-                        Export Report
-                    </Button>
+                    <ExportButton
+                        data={serializedPayrolls}
+                        filename={`payroll_report_${new Date().toISOString().split('T')[0]}`}
+                        columns={[
+                            { header: "Employee", key: "user.name" },
+                            { header: "Email", key: "user.email" },
+                            { header: "Month", key: "month" },
+                            { header: "Base Salary", key: "baseSalary" },
+                            { header: "Deductions", key: "deductions" },
+                            { header: "Net Salary", key: "netSalary" }
+                        ]}
+                    />
                     {user.role === "admin" && <RunPayrollDialog />}
                 </div>
             </div>

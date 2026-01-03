@@ -3,7 +3,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Clock, Briefcase, ArrowRight } from "lucide-react";
-import { RecentActivity } from "@/lib/services/dashboard.service";
+import { RecentActivity } from "@/services/dashboard.service";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";

@@ -40,6 +40,7 @@ export async function getAuthUser(): Promise<AuthUser | null> {
             existingByEmail.profileImage = clerkUser.imageUrl || existingByEmail.profileImage;
             await existingByEmail.save();
             user = existingByEmail;
+        } else {
             // Default logic if not pre-created (Auto-provisioning / Fallback)
             // In initial setup, we make the first user an admin.
             const userCount = await User.countDocuments({});
