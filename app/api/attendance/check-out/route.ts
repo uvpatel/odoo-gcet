@@ -1,29 +1,56 @@
 import { connectDB } from "@/lib/db";
 import Attendance from "@/models/Attendance";
+import { getAuthUser } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
-    await connectDB();
     try {
-        const { userId, date, time } = await req.json();
+        await connectDB();
+        const user = await getAuthUser();
 
-        const checkDate = new Date(date);
-        checkDate.setHours(0, 0, 0, 0);
-
-        const attendance = await Attendance.findOne({
-            user: userId,
-            date: checkDate
-        });
-
-        if (!attendance) {
-            return NextResponse.json({ error: "No check-in record found for today" }, { status: 404 });
+        if (!user) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        attendance.checkOut = new Date(time);
-        await attendance.save();
+        const now = new Date();
+        const startOfDay = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0));
+        const endOfDay = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 23, 59, 59, 999));
 
-        return NextResponse.json(attendance);
-    } catch (error: any) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        // 1. Find today's record
+        const record = await Attendance.findOne({
+            user: user._id,
+            date: {
+                $gte: startOfDay,
+                $lte: endOfDay
+            }
+        });
+
+        if (!record) {
+            return NextResponse.json(
+                { error: "No check-in record found for today. Please check in first." },
+                { status: 400 }
+            );
+        }
+
+        if (record.checkOut) {
+            return NextResponse.json(
+                { error: "Already checked out today." },
+                { status: 400 }
+            );
+        }
+
+        // 2. Update Check-out
+        record.checkOut = now;
+
+        // Calculate status/hours if needed (e.g., check for half-day if check-out is too early)
+        // For simplicity, we keep it as Present unless logic dictates otherwise
+
+        await record.save();
+
+        return NextResponse.json(record, { status: 200 });
+
+    } catch (error) {
+        console.error("Check-out error:", error);
+        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }
 }

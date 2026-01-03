@@ -1,35 +1,52 @@
 import { connectDB } from "@/lib/db";
 import Attendance from "@/models/Attendance";
+import { getAuthUser } from "@/lib/auth";
 import { NextResponse } from "next/server";
+import { z } from "zod";
 
 export async function POST(req: Request) {
-    await connectDB();
     try {
-        const { userId, date, time } = await req.json(); // date and time from client or server time
+        await connectDB();
+        const user = await getAuthUser();
 
-        // Normalizing date to start of day for query
-        const checkDate = new Date(date);
-        checkDate.setHours(0, 0, 0, 0);
-
-        // Check if already checked in
-        const existing = await Attendance.findOne({
-            user: userId,
-            date: checkDate
-        });
-
-        if (existing) {
-            return NextResponse.json({ error: "Already checked in for today" }, { status: 400 });
+        if (!user) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const attendance = await Attendance.create({
-            user: userId,
-            date: checkDate,
-            checkIn: new Date(time), // actual timestamp
+        // Define "Today" based on server time (UTC)
+        // Set to midnight to standardize
+        const now = new Date();
+        const startOfDay = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0));
+        const endOfDay = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 23, 59, 59, 999));
+
+        // 1. Check if record already exists for today
+        const existingRecord = await Attendance.findOne({
+            user: user._id,
+            date: {
+                $gte: startOfDay,
+                $lte: endOfDay
+            }
+        });
+
+        if (existingRecord) {
+            return NextResponse.json(
+                { error: "Already checked in for today." },
+                { status: 400 }
+            );
+        }
+
+        // 2. Create Check-in Record
+        const newRecord = await Attendance.create({
+            user: user._id,
+            date: startOfDay, // Normalize date field
+            checkIn: now,
             status: "Present"
         });
 
-        return NextResponse.json(attendance, { status: 201 });
-    } catch (error: any) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        return NextResponse.json(newRecord, { status: 201 });
+
+    } catch (error) {
+        console.error("Check-in error:", error);
+        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }
 }
