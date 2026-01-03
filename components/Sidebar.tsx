@@ -11,6 +11,7 @@ import {
     LogOut,
     Menu,
     Hexagon,
+    ShieldCheck,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -20,17 +21,20 @@ import { Button } from "./ui/button";
 import { SignOutButton } from "@clerk/nextjs";
 
 const sidebarItems = [
-    { icon: LayoutDashboard, label: "Overview", href: "/dashboard" },
-    { icon: Users, label: "Employees", href: "/dashboard/users" },
-    { icon: CalendarCheck, label: "Attendance", href: "/dashboard/attendance" },
-    { icon: CalendarDays, label: "Leaves", href: "/dashboard/leaves" },
-    { icon: Banknote, label: "Payroll", href: "/dashboard/payroll" },
-    { icon: FileBarChart, label: "Reports", href: "/dashboard/reports" },
+    { icon: LayoutDashboard, label: "Overview", href: "/dashboard", roles: ["admin", "employee"] },
+    { icon: ShieldCheck, label: "Admin Panel", href: "/admin", roles: ["admin"] },
+    { icon: Users, label: "Employees", href: "/dashboard/users", roles: ["admin"] },
+    { icon: CalendarCheck, label: "Attendance", href: "/dashboard/attendance", roles: ["admin", "employee"] },
+    { icon: CalendarDays, label: "Leaves", href: "/dashboard/leaves", roles: ["admin", "employee"] },
+    { icon: Banknote, label: "Payroll", href: "/dashboard/payroll", roles: ["admin", "employee"] },
+    { icon: FileBarChart, label: "Reports", href: "/dashboard/reports", roles: ["admin"] },
 ];
 
-export function Sidebar() {
+export function Sidebar({ role = "employee" }: { role?: "admin" | "employee" }) {
     const pathname = usePathname();
     const [isCollapsed, setIsCollapsed] = useState(false);
+
+    const filteredItems = sidebarItems.filter(item => item.roles.includes(role));
 
     return (
         <motion.aside
@@ -69,7 +73,7 @@ export function Sidebar() {
 
             {/* Navigation */}
             <nav className="flex-1 space-y-2 p-4 overflow-y-auto scrollbar-hide">
-                {sidebarItems.map((item) => {
+                {filteredItems.map((item) => {
                     const isActive = pathname === item.href;
                     return (
                         <Link key={item.href} href={item.href} className="block group relative">

@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { connectDB } from "@/lib/db";
 import Attendance from "@/models/Attendance";
 import Payroll from "@/models/Payroll";
+import { ReportsCharts } from "@/components/dashboard/ReportsCharts";
 
 async function getReports() {
     await connectDB();
@@ -23,7 +24,7 @@ async function getReports() {
     const payrollReport = await Payroll.aggregate([
         {
             $group: {
-                _id: "$month",
+                _id: "$month", // Use "month" field (string YYYY-MM) directly
                 totalPayout: { $sum: "$netSalary" },
                 count: { $sum: 1 }
             }
@@ -34,49 +35,29 @@ async function getReports() {
     return { attendanceReport, payrollReport };
 }
 
+import { requireRole } from "@/lib/auth";
+
 export default async function ReportsPage() {
+    await requireRole(["admin"]);
     const { attendanceReport, payrollReport } = await getReports();
 
     return (
         <div className="space-y-6">
-            <h2 className="text-3xl font-bold tracking-tight">Reports</h2>
+            <h2 className="text-3xl font-bold tracking-tight">Reports & Analytics</h2>
 
+            {/* Charts Section */}
+            <ReportsCharts attendanceData={attendanceReport} payrollData={payrollReport} />
+
+            {/* Summary KPI Cards could go here if needed, but charts cover it */}
             <div className="grid gap-6 md:grid-cols-2">
                 <Card>
                     <CardHeader>
-                        <CardTitle>Attendance Trends (Last 7 Days)</CardTitle>
+                        <CardTitle>Recent Data Summary</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <ul className="space-y-2">
-                            {attendanceReport.map((day) => (
-                                <li key={day._id} className="flex justify-between border-b pb-2 last:border-0 last:pb-0">
-                                    <span>{day._id}</span>
-                                    <span className="font-medium text-green-600">
-                                        {day.present} / {day.total} Present
-                                    </span>
-                                </li>
-                            ))}
-                            {attendanceReport.length === 0 && <p className="text-muted-foreground">No data available</p>}
-                        </ul>
-                    </CardContent>
-                </Card>
-
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Payroll Summary</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <ul className="space-y-2">
-                            {payrollReport.map((month) => (
-                                <li key={month._id} className="flex justify-between border-b pb-2 last:border-0 last:pb-0">
-                                    <span>{month._id}</span>
-                                    <span className="font-bold">
-                                        ${month.totalPayout.toLocaleString()} ({month.count} employees)
-                                    </span>
-                                </li>
-                            ))}
-                            {payrollReport.length === 0 && <p className="text-muted-foreground">No data available</p>}
-                        </ul>
+                        <p className="text-muted-foreground">
+                            Generated from {attendanceReport.length} days of attendance and {payrollReport.length} payroll cycles.
+                        </p>
                     </CardContent>
                 </Card>
             </div>

@@ -1,10 +1,10 @@
 import { Header } from "@/components/Header";
 import { Sidebar } from "@/components/Sidebar";
 
-export function AppLayout({ children }: { children: React.ReactNode }) {
+export function AppLayout({ children, role }: { children: React.ReactNode, role?: "admin" | "employee" }) {
     return (
         <div className="flex h-screen bg-muted/20 overflow-hidden">
-            <Sidebar />
+            <Sidebar role={role} />
             <div className="flex flex-1 flex-col overflow-hidden">
                 <Header />
                 <main className="flex-1 overflow-y-auto p-6">

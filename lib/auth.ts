@@ -20,21 +20,33 @@ export async function getAuthUser(): Promise<AuthUser | null> {
     // Find user in DB
     let user = await User.findOne({ clerkId: clerkUser.id });
 
-    // Sync if user doesn't exist
+    // Link by email if pre-created by Admin
     if (!user) {
         const email = clerkUser.emailAddresses[0]?.emailAddress;
-        if (!email) return null; // Should not happen with valid Clerk user
+        if (!email) return null;
 
-        // Default role is 'employee', first user might be hardcoded as admin manually or via env logic later
-        // For now, simple creation
-        user = await User.create({
-            clerkId: clerkUser.id,
-            name: `${clerkUser.firstName || ""} ${clerkUser.lastName || ""}`.trim() || "New User",
-            email: email,
-            role: "employee", // Default role
-            employeeId: `EMP-${Math.floor(1000 + Math.random() * 9000)}-${Date.now().toString().slice(-4)}`, // Generate simple ID
-            profileImage: clerkUser.imageUrl,
-        });
+        const existingByEmail = await User.findOne({ email });
+
+        if (existingByEmail) {
+            existingByEmail.clerkId = clerkUser.id;
+            existingByEmail.profileImage = clerkUser.imageUrl || existingByEmail.profileImage;
+            await existingByEmail.save();
+            user = existingByEmail;
+        } else {
+            // Default logic if not pre-created (Auto-provisioning)
+            user = await User.create({
+                clerkId: clerkUser.id,
+                name: `${clerkUser.firstName || ""} ${clerkUser.lastName || ""}`.trim() || "New User",
+                email: email,
+                role: "employee",
+                employeeId: `EMP-${Math.floor(1000 + Math.random() * 9000)}-${Date.now().toString().slice(-4)}`,
+                profileImage: clerkUser.imageUrl,
+            });
+        }
+    }
+
+    if (!user?.isActive) {
+        return null; // Block access for deactivated users
     }
 
     return user ? (user.toObject() as AuthUser) : null;

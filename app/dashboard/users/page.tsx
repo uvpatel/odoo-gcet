@@ -4,9 +4,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { connectDB } from "@/lib/db";
 import User from "@/models/User";
-import { Plus, Mail, Phone, MoreHorizontal, Briefcase } from "lucide-react";
+import { Mail, Phone, MoreHorizontal, Briefcase } from "lucide-react";
 import { UserSearch } from "./search";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { UserActionsMenu } from "@/components/dashboard/UserActionsMenu";
+import { AddEmployeeDialog } from "@/components/dashboard/AddEmployeeDialog";
+import { UserActions } from "@/components/dashboard/UserActions";
+import { getAuthUser } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
 export default async function UsersPage({
     searchParams,
@@ -14,7 +18,14 @@ export default async function UsersPage({
     searchParams: Promise<{ query?: string }>;
 }) {
     const { query } = await searchParams;
+
+    // 1. Authenticate & Authorize
     await connectDB();
+    const currentUser = await getAuthUser();
+
+    if (!currentUser || currentUser.role !== "admin") {
+        redirect("/dashboard");
+    }
 
     const filter: any = {};
     if (query) {
@@ -36,9 +47,7 @@ export default async function UsersPage({
                 </div>
                 <div className="flex items-center gap-2">
                     <UserSearch />
-                    <Button className="bg-primary hover:bg-primary/90 shadow-sm">
-                        <Plus className="mr-2 h-4 w-4" /> Add Employee
-                    </Button>
+                    <AddEmployeeDialog />
                 </div>
             </div>
 
@@ -58,27 +67,14 @@ export default async function UsersPage({
                         <Card key={user._id.toString()} className="overflow-hidden group hover:shadow-lg transition-all duration-300 border-muted/60">
                             <CardHeader className="relative p-0 h-24 bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-900 dark:to-indigo-900">
                                 <div className="absolute right-2 top-2">
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                            <Button variant="ghost" size="icon" className="h-8 w-8 text-white/80 hover:text-white hover:bg-white/20">
-                                                <MoreHorizontal className="h-4 w-4" />
-                                            </Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent align="end">
-                                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                            <DropdownMenuItem>View Profile</DropdownMenuItem>
-                                            <DropdownMenuItem>Edit Details</DropdownMenuItem>
-                                            <DropdownMenuSeparator />
-                                            <DropdownMenuItem className="text-destructive">Deactivate</DropdownMenuItem>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
+                                    <UserActionsMenu userId={user._id.toString()} isActive={user.isActive} />
                                 </div>
                             </CardHeader>
                             <CardContent className="pt-0 pb-6 px-6">
                                 <div className="flex flex-col items-center -mt-12 mb-4">
                                     <Avatar className="h-24 w-24 border-4 border-background shadow-md">
                                         <AvatarImage src={user.profileImage} alt={user.name} />
-                                        <AvatarFallback className="text-xl bg-muted">{user.name.substring(0, 2).toUpperCase()}</AvatarFallback>
+                                        <AvatarFallback className="text-xl bg-muted bg-primary/10 text-primary">{user.name.substring(0, 2).toUpperCase()}</AvatarFallback>
                                     </Avatar>
                                     <h3 className="mt-3 text-lg font-semibold text-center leading-tight">{user.name}</h3>
                                     <span className="text-sm text-muted-foreground text-center flex items-center gap-1 mt-1">
@@ -107,8 +103,8 @@ export default async function UsersPage({
                                             <span className="text-sm font-medium">{user.isActive ? "Active" : "Inactive"}</span>
                                         </div>
                                     </div>
-                                    <Badge variant="outline" className="font-normal">
-                                        Department: Engineering
+                                    <Badge variant="outline" className="font-normal capitalize bg-muted/50">
+                                        {user.role}
                                     </Badge>
                                 </div>
                             </CardContent>

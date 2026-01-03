@@ -1,9 +1,14 @@
 import { AppLayout } from "@/components/AppLayout";
 
-export default function DashboardLayout({
+import { getAuthUser } from "@/lib/auth";
+
+export default async function DashboardLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
-    return <AppLayout>{children}</AppLayout>;
+    const user = await getAuthUser();
+    const role = (user?.role as "admin" | "employee") || "employee";
+
+    return <AppLayout role={role}>{children}</AppLayout>;
 }

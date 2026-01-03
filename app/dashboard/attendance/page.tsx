@@ -4,9 +4,16 @@ import { Badge } from "@/components/ui/badge";
 import { connectDB } from "@/lib/db";
 import Attendance from "@/models/Attendance";
 
+import { getAuthUser } from "@/lib/auth";
+
 export default async function AttendancePage() {
     await connectDB();
-    const logs = await Attendance.find({})
+    const user = await getAuthUser();
+    if (!user) return null;
+
+    const query = user.role === "admin" ? {} : { user: user._id };
+
+    const logs = await Attendance.find(query)
         .populate("user", "name email")
         .sort({ date: -1 })
         .limit(50);

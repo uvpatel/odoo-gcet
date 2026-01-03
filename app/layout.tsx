@@ -27,6 +27,10 @@ export const metadata: Metadata = {
   creator: "Dayflow",
   applicationName: "Dayflow HRMS",
   category: "Business & Productivity",
+  icons: {
+    icon: "/favicon.ico",
+    
+  }
 };
 
 export default function RootLayout({
