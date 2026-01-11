@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle2, Hexagon, BarChart3, Users, ShieldCheck, Zap } from "lucide-react";
 import { SignInButton, SignUpButton, SignedIn, SignedOut } from "@clerk/nextjs";
+import Footer from "@/components/shared/Footer";
 
 export default function LandingPage() {
     return (
@@ -140,49 +141,7 @@ export default function LandingPage() {
             </main>
 
             {/* Footer */}
-            <footer className="border-t py-12 bg-muted/20">
-                <div className="container grid md:grid-cols-4 gap-8">
-                    <div className="space-y-4">
-                        <div className="flex items-center gap-2 font-bold text-xl">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                                <Hexagon className="h-5 w-5 fill-current" />
-                            </div>
-                            Dayflow
-                        </div>
-                        <p className="text-sm text-muted-foreground">
-                            Making work flow better <br /> for everyone, everywhere.
-                        </p>
-                    </div>
-                    <div>
-                        <h4 className="font-semibold mb-4">Product</h4>
-                        <ul className="space-y-2 text-sm text-muted-foreground">
-                            <li>Features</li>
-                            <li>Pricing</li>
-                            <li>Changelog</li>
-                            <li>Docs</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4 className="font-semibold mb-4">Company</h4>
-                        <ul className="space-y-2 text-sm text-muted-foreground">
-                            <li>About</li>
-                            <li>Careers</li>
-                            <li>Legal</li>
-                            <li>Contact</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4 className="font-semibold mb-4">Legal</h4>
-                        <ul className="space-y-2 text-sm text-muted-foreground">
-                            <li>Privacy Policy</li>
-                            <li>Terms of Service</li>
-                        </ul>
-                    </div>
-                </div>
-                <div className="container mt-12 pt-8 border-t text-center text-sm text-muted-foreground">
-                    © {new Date().getFullYear()} Dayflow Inc. All rights reserved.
-                </div>
-            </footer>
+            <Footer />
         </div>
     );
 }

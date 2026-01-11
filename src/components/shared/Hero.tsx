@@ -1,6 +1,7 @@
 "use client";
 
 import { BackgroundRippleEffect } from "@/components/ui/background-ripple-effect";
+import { HeroButton }  from "./herobutton";
 
 export default function Hero() {
     return (
@@ -14,6 +15,7 @@ export default function Hero() {
                 <p className="relative z-10 mx-auto mt-4 max-w-xl text-center text-neutral-800 dark:text-neutral-500">
                     The all-in-one HRMS platform designed to streamline attendance, payroll, and team management. Built for modern teams who value clarity and speed.
                 </p>
+                <HeroButton />
             </div>
         </section>
 
