@@ -56,9 +56,9 @@ function Footer() {
 
 
   return (
-    <footer className="border-t py-12 bg-muted/20 mt-10 p-10">
+    <footer className="mx-auto   border-t py-14 px-35 bg-muted/20 mt-12 p-10">
       <div className="container grid md:grid-cols-4 gap-8">
-        <div className="space-y-4">
+        <div className="space-y-6">
           <div className="flex items-center gap-2 font-bold text-xl">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
               <Hexagon className="h-5 w-5 fill-current" />

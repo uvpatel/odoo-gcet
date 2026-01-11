@@ -10,3 +10,4 @@ export interface CardNavItem {
   textColor: string;
   links: CardNavLink[];
 }
+
