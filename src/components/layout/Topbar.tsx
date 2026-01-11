@@ -16,7 +16,7 @@ export function Header() {
                     <Input
                         type="search"
                         placeholder="Search..."
-                        className="w-full bg-background pl-9 md:w-[300px] lg:w-[300px] border-none shadow-none bg-muted/20 focus-visible:bg-background transition-colors"
+                        className="w-full  pl-9 md:w-[300px] lg:w-[300px] border-none shadow-none bg-muted/20 focus-visible:bg-background transition-colors"
                     />
                 </div>
             </div>

@@ -73,7 +73,7 @@ export default async function UsersPage({
                                 <div className="flex flex-col items-center -mt-12 mb-4">
                                     <Avatar className="h-24 w-24 border-4 border-background shadow-md">
                                         <AvatarImage src={user.profileImage} alt={user.name} />
-                                        <AvatarFallback className="text-xl bg-muted bg-primary/10 text-primary">{user.name.substring(0, 2).toUpperCase()}</AvatarFallback>
+                                        <AvatarFallback className="text-xl bg-muted text-primary">{user.name.substring(0, 2).toUpperCase()}</AvatarFallback>
                                     </Avatar>
                                     <h3 className="mt-3 text-lg font-semibold text-center leading-tight">{user.name}</h3>
                                     <span className="text-sm text-muted-foreground text-center flex items-center gap-1 mt-1">
