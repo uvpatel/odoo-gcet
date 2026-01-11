@@ -1,16 +1,24 @@
-"use client";
-
+import { Suspense } from "react";
 import Hero from "@/components/shared/Hero";
-
 import { FetureSection } from "@/components/shared/FetureSection";
+import { LoaderOne } from "@/components/ui/loader";
+import { Delay } from "@/components/Delay";
 
 export default function Page() {
   return (
-    <main>
-      
-      <Hero />
-      <FetureSection />
-     
-    </main>
+    <Suspense
+      fallback={
+        <div className="flex h-screen items-center justify-center">
+          <LoaderOne />
+        </div>
+      }
+    >
+      <Delay>
+        <main>
+          <Hero />
+          <FetureSection />
+        </main>
+      </Delay>
+    </Suspense>
   );
 }
