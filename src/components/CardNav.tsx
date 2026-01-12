@@ -4,6 +4,7 @@ import { gsap } from 'gsap';
 // use your own icon import if react-icons is not available
 import { FaArrowRight } from "react-icons/fa";
 import { GoArrowUpRight } from 'react-icons/go';
+import { useRouter } from "next/navigation"
 
 type CardNavLink = {
   label: string;
@@ -81,6 +82,7 @@ const CardNav: React.FC<CardNavProps> = ({
     }
     return 260;
   };
+  const router = useRouter();
 
   const createTimeline = () => {
     const navEl = navRef.current;
@@ -193,6 +195,7 @@ const CardNav: React.FC<CardNavProps> = ({
 
           <button
             type="button"
+             onClick={() => router.push("/dashboard")}
             className="card-nav-cta-button hidden md:inline-flex border-0 rounded-[calc(0.75rem-0.2rem)] px-4 items-center h-full font-medium cursor-pointer transition-colors duration-300"
             style={{ backgroundColor: buttonBgColor, color: buttonTextColor }}
           >
