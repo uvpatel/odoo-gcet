@@ -1,7 +1,8 @@
 "use client";
-
-export const AdminPage = () => {
+export default function AdminDashboardPage() {
   return (
-    <div>Admin</div>
-  )
+    <div>
+      <h1>Admin Dashboard</h1>
+    </div>
+  );
 }

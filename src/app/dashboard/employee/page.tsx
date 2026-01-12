@@ -1,6 +1,6 @@
 "use client";
 
-export const EmployeePage = () => {
+export default function EmployeePage() {
   return (
     <div>Employee</div>
   )
