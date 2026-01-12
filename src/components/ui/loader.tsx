@@ -74,7 +74,7 @@ export const LoaderThree = () => {
         transition={{
           duration: 2,
           ease: easeInOut,
-          repeat: Infinity,
+          repeat: 2,
           repeatType: "reverse",
         }}
         d="M13 3l0 7l6 0l-8 11l0 -7l-6 0l8 -11"
