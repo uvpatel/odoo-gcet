@@ -1,17 +1,49 @@
-// name,id,department,position,startDate,endDate,status
+// models/Leave.ts
+import { Schema, model, models, Types } from "mongoose";
 
-import mongoose, {Schema}  from "mongoose"
+export enum LeaveType {
+  PAID = "PAID",
+  SICK = "SICK",
+  UNPAID = "UNPAID",
+}
 
+export enum LeaveStatus {
+  PENDING = "PENDING",
+  APPROVED = "APPROVED",
+  REJECTED = "REJECTED",
+}
 
-const LeaveSchema: Schema = new Schema({
-    name: {type: String, required: true},
-    id: {type: String, required: true, unique: true},
-    department: {type: String, required: true},
-    position: {type: String, required: true},
-    reason: {type: String, required: true},
-    startDate: {type: Date, required: true},
-    endDate: {type: Date, required: true},
-    status: {type: String, required: true, enum: ['Pending', 'Approved', 'Rejected'], default: 'Pending'},
-}, {timestamps: true})
+export interface ILeave {
+  employeeId: Types.ObjectId;
+  leaveType: LeaveType;
+  startDate: Date;
+  endDate: Date;
+  reason?: string;
+  status: LeaveStatus;
+  approvedBy?: Types.ObjectId;
+  adminComment?: string;
+}
 
-export default mongoose.model('Leave', LeaveSchema) || mongoose.model('Leave', LeaveSchema)
+const LeaveSchema = new Schema<ILeave>(
+  {
+    employeeId: { type: Schema.Types.ObjectId, ref: "Employee", required: true },
+    leaveType: {
+      type: String,
+      enum: Object.values(LeaveType),
+      required: true,
+    },
+    startDate: Date,
+    endDate: Date,
+    reason: String,
+    status: {
+      type: String,
+      enum: Object.values(LeaveStatus),
+      default: LeaveStatus.PENDING,
+    },
+    approvedBy: { type: Schema.Types.ObjectId, ref: "User" },
+    adminComment: String,
+  },
+  { timestamps: true }
+);
+
+export default models.Leave || model<ILeave>("Leave", LeaveSchema);
