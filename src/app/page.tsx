@@ -1,3 +1,4 @@
+"use client";
 import { Suspense } from "react";
 import Hero from "@/components/shared/Hero";
 import { FetureSection } from "@/components/shared/FetureSection";
