@@ -6,7 +6,7 @@ import { motion, easeInOut } from "motion/react"
 export const LoaderOne = () => {
   const transition = (x: number) => ({
     duration: 1,
-    repeat: Infinity,
+    repeat: 6,
     repeatType: "loop" as const,
     delay: x * 0.2,
     ease: easeInOut,
@@ -93,7 +93,7 @@ export const LoaderFour = ({ text = "Loading..." }: { text?: string }) => {
         }}
         transition={{
           duration: 0.05,
-          repeat: Infinity,
+          repeat: 6,
           repeatType: "reverse",
           repeatDelay: 2,
           ease: "linear",
@@ -160,7 +160,7 @@ export const LoaderFive = ({ text }: { text: string }) => {
           }}
           transition={{
             duration: 0.5,
-            repeat: Infinity,
+            repeat: 6,
             repeatType: "loop",
             delay: i * 0.05,
             ease: easeInOut,
