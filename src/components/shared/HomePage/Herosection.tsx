@@ -75,7 +75,7 @@ export default function HeroSection() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-600 via-purple-500 to-indigo-600 overflow-hidden">
+    <div className="min-h-screen bg-linear-to-br from-purple-600 via-purple-500 to-indigo-600 overflow-hidden">
       <div className="container mx-auto px-6 py-16 lg:py-24">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
@@ -91,7 +91,7 @@ export default function HeroSection() {
             <div className="space-y-3">
               {features.map((feature, index) => (
                 <div key={index} className="flex items-center space-x-3">
-                  <div className="flex-shrink-0 w-6 h-6 bg-white rounded-full flex items-center justify-center">
+                  <div className="shrink-0 w-6 h-6 bg-white rounded-full flex items-center justify-center">
                     <Check className="w-4 h-4 text-purple-600" strokeWidth={3} />
                   </div>
                   <span className="text-lg font-medium">{feature}</span>
@@ -129,7 +129,7 @@ export default function HeroSection() {
                 </div>
                 <div className="space-y-3">
                   <div className="h-12 bg-linear-to-r from-purple-100 to-purple-50 rounded-lg"></div>
-                  <div className="h-24 bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg"></div>
+                  <div className="h-24 bg-linear-to-br from-blue-50 to-purple-50 rounded-lg"></div>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="h-16 bg-purple-50 rounded-lg"></div>
                     <div className="h-16 bg-blue-50 rounded-lg"></div>
@@ -155,8 +155,8 @@ export default function HeroSection() {
                     <div className="h-3 w-24 bg-gray-300 rounded"></div>
                     <div className="h-3 w-16 bg-gray-200 rounded"></div>
                   </div>
-                  <div className="h-32 bg-gradient-to-br from-orange-100 via-purple-100 to-blue-100 rounded-lg relative overflow-hidden">
-                    <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-purple-200 to-transparent"></div>
+                  <div className="h-32 bg-linear-to-br from-orange-100 via-purple-100 to-blue-100 rounded-lg relative overflow-hidden">
+                    <div className="absolute bottom-0 left-0 right-0 h-20 bg-linear-to-t from-purple-200 to-transparent"></div>
                   </div>
                   <div className="grid grid-cols-3 gap-2">
                     <div className="h-12 bg-purple-100 rounded"></div>
