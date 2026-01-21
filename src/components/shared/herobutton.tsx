@@ -16,7 +16,7 @@ export function HeroButton() {
           "rgb(255, 200, 100)",
         ]}
       >
-        <div className="pointer-events-auto relative z-10">
+        <div className="pointer-events-auto relative z-100 cursor-pointer">
           <button
             onClick={() => router.push("/dashboard")}
             className="cursor-pointer rounded-full bg-linear-to-r from-neutral-100 via-neutral-100 to-white px-4 py-2 text-black transition-all active:scale-95 dark:bg-black dark:text-white"
