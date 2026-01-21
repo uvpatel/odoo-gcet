@@ -1,35 +1,17 @@
-import { Schema, model, models, Types } from "mongoose";
+// name,id,department,position,startDate,endDate,status
 
-export type LeaveType = "Paid" | "Sick" | "Unpaid";
-export type LeaveStatus = "Pending" | "Approved" | "Rejected";
+import mongoose, {Schema}  from "mongoose"
 
-export interface ILeave {
-    user: Types.ObjectId;
-    type: LeaveType;
-    from: Date;
-    to: Date;
-    reason?: string;
-    status: LeaveStatus;
-    adminComment?: string;
-}
 
-const LeaveSchema = new Schema<ILeave>(
-    {
-        user: { type: Schema.Types.ObjectId, ref: "User", required: true },
-        type: { type: String, enum: ["Paid", "Sick", "Unpaid"], required: true },
+const LeaveSchema: Schema = new Schema({
+    name: {type: String, required: true},
+    id: {type: String, required: true, unique: true},
+    department: {type: String, required: true},
+    position: {type: String, required: true},
+    reason: {type: String, required: true},
+    startDate: {type: Date, required: true},
+    endDate: {type: Date, required: true},
+    status: {type: String, required: true, enum: ['Pending', 'Approved', 'Rejected'], default: 'Pending'},
+}, {timestamps: true})
 
-        from: Date,
-        to: Date,
-        reason: String,
-
-        status: {
-            type: String,
-            enum: ["Pending", "Approved", "Rejected"],
-            default: "Pending",
-        },
-        adminComment: String,
-    },
-    { timestamps: true }
-);
-
-export default models.Leave || model<ILeave>("Leave", LeaveSchema);
+export default mongoose.model('Leave', LeaveSchema) || mongoose.model('Leave', LeaveSchema)

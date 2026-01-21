@@ -1,54 +1,41 @@
-import { ClerkProvider } from "@clerk/nextjs";
-import { Toaster } from "sonner";
-import "./globals.css";
-import { Inter } from "next/font/google";
-import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
+import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+import { Navbar }  from "@/components/shared/Navbar"
+import { ClerkProvider } from "@clerk/nextjs";
+import Footer  from "@/components/shared/Footer";
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
 
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
-  title: {
-    default: "Dayflow HRMS | Smart Human Resource Management System",
-    template: "%s | Dayflow HRMS",
-  },
-  description:
-    "Dayflow HRMS is a modern Human Resource Management System for managing employees, attendance, leave, and payroll with secure authentication and role-based access.",
-  keywords: [
-    "HRMS",
-    "Human Resource Management System",
-    "Attendance Management",
-    "Leave Management System",
-    "Payroll Software",
-    "Employee Management",
-    "HR Software",
-  ],
-  authors: [{ name: "Dayflow Team" }],
-  creator: "Dayflow",
-  applicationName: "Dayflow HRMS",
-  category: "Business & Productivity",
-  icons: {
-    icon: "/favicon.ico",
-
-  }
+  title: "DevFlow - HR Management",
+  description: "Application to manage HR tasks efficiently.",
 };
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
-    <html lang="en">
-      <ClerkProvider>
-        <body className={cn(inter.className, "antialiased bg-background text-foreground")}>
+    <ClerkProvider>
+      <html lang="en">
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        >
+          <Navbar />
           {children}
-          <Toaster richColors position="top-right" />
+           <Footer />
         </body>
-      </ClerkProvider>
-    </html>
+      </html>
+    </ClerkProvider>
   );
 }
-
-
