@@ -1,3 +1,7 @@
-export default function Page() {
-  return <h1>Welcome to page!</h1>;
+import React from 'react'
+
+export default function RequestsPage() {
+  return (
+    <div>RequestsPage</div>
+  )
 }

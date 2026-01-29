@@ -29,7 +29,7 @@ import { getCurrentUser } from "@/lib/auth" // better than requireAuth for GET
 
 export async function GET(req: Request) {
   try {
-    const user = await getCurrentUser(req)
+    const user = await getCurrentUser()
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
@@ -69,7 +69,7 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    const user = await getCurrentUser(req)
+    const user = await getCurrentUser()
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }

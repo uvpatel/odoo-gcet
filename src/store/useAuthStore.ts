@@ -1,6 +1,8 @@
 // store/useAuthStore.ts
 import { create } from "zustand";
 
+
+// Auth State Types
 interface AuthState {
   user: any;
   token: string | null;
@@ -8,6 +10,8 @@ interface AuthState {
   logout: () => void;
 }
 
+
+// useAuthStore create
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   token: null,

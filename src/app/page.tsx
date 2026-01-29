@@ -1,7 +1,7 @@
 
 import { Suspense } from "react";
 import Hero from "@/components/shared/Hero";
-import { FetureSection } from "@/components/shared/FetureSection";
+import { FetureSection } from "@/components/shared/Feature/FetureSection";
 import { LoaderOne } from "@/components/ui/loader";
 import { Delay } from "@/components/Delay";
 

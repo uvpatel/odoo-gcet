@@ -2,9 +2,13 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-import { Navbar }  from "@/components/shared/Navbar"
+import { Navbar }  from "@/components/shared/Navbar/Navbar"
 import { ClerkProvider } from "@clerk/nextjs";
-import Footer  from "@/components/shared/Footer";
+import Footer  from "@/components/shared/Footer/Footer";
+
+import { ViewTransitions } from 'next-view-transitions'
+
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -26,16 +30,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+    <ViewTransitions>
+
     <ClerkProvider>
       <html lang="en">
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased suppressHydrationWarning`}
-        >
+          >
           <Navbar />
           {children}
            <Footer />
         </body>
       </html>
     </ClerkProvider>
+          </ViewTransitions>
   );
 }
